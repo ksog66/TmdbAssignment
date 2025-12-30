@@ -1,5 +1,8 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+import kotlin.apply
+import kotlin.collections.getValue
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -10,6 +13,12 @@ plugins {
     alias(libs.plugins.sqldelight)
 }
 
+val properties = Properties().apply {
+    load(file("keys.properties").reader())
+}
+
+val baseUrl: String by properties
+val bearerToken: String by properties
 kotlin {
     androidTarget {
         compilerOptions {
@@ -64,6 +73,7 @@ kotlin {
             // Koin
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
             
             // SQLDelight
             implementation(libs.sqldelight.coroutines.extensions)
@@ -84,6 +94,12 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+
+        buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
+        buildConfigField("String", "BEARER_TOKEN", "\"$bearerToken\"")
+    }
+    buildFeatures {
+        buildConfig = true
     }
     packaging {
         resources {
