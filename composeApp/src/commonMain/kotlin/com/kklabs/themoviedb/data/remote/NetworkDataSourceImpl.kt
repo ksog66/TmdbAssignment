@@ -12,7 +12,8 @@ class NetworkDataSourceImpl (
 ) : NetworkDataSource {
     override suspend fun getNowPlaying(page: Int): Result<MovieResponseDTO> {
         return try {
-            httpClient.get("/movie/now_playing?page=$page").body()
+            val response = httpClient.get("/movie/now_playing?page=$page").body<MovieResponseDTO>()
+            Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -20,7 +21,8 @@ class NetworkDataSourceImpl (
 
     override suspend fun getPopular(page: Int): Result<MovieResponseDTO> {
         return try {
-            httpClient.get("/movie/popular?page=$page").body()
+            val response = httpClient.get("/movie/popular?page=$page").body<MovieResponseDTO>()
+            Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -28,7 +30,8 @@ class NetworkDataSourceImpl (
 
     override suspend fun getTopRated(page: Int): Result<MovieResponseDTO> {
         return try {
-            httpClient.get("/movie/top_rated?page=$page").body()
+            val response = httpClient.get("/movie/top_rated?page=$page").body<MovieResponseDTO>()
+            Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -36,7 +39,8 @@ class NetworkDataSourceImpl (
 
     override suspend fun getUpcoming(page: Int): Result<MovieResponseDTO> {
         return try {
-            httpClient.get("/movie/upcoming?page=$page").body()
+            val response = httpClient.get("/movie/upcoming?page=$page").body<MovieResponseDTO>()
+            Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -44,7 +48,8 @@ class NetworkDataSourceImpl (
 
     override suspend fun getMovieDetail(id: Int): Result<MovieDetailDTO> {
         return try {
-            httpClient.get("/movie/$id").body()
+            val response = httpClient.get("/movie/$id").body<MovieDetailDTO>()
+            Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
         }
