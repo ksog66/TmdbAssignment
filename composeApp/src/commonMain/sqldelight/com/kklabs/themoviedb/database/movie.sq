@@ -1,0 +1,52 @@
+import kotlin.Boolean;
+CREATE TABLE MovieEntity (
+    id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    posterPath TEXT,
+    backdropPath TEXT,
+    voteAverage REAL,
+    overview TEXT NOT NULL,
+    releaseDate TEXT,
+    adult INTEGER AS Boolean NOT NULL DEFAULT 0,
+    listType TEXT NOT NULL,
+    page INTEGER NOT NULL,
+    indexInResponse INTEGER NOT NULL,
+    PRIMARY KEY (id, listType)
+);
+
+insertMovie:
+INSERT OR REPLACE INTO MovieEntity(
+    id,
+    title,
+    posterPath,
+    backdropPath,
+    voteAverage,
+    overview,
+    releaseDate,
+    adult,
+    listType,
+    page,
+    indexInResponse
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+getPreviewMovies:
+SELECT * FROM MovieEntity
+WHERE listType = :type
+ORDER BY page ASC, indexInResponse ASC
+LIMIT 10;
+
+clearMovies:
+DELETE FROM MovieEntity WHERE listType = :type;
+
+getLastPage:
+SELECT MAX(page) AS max_page FROM MovieEntity WHERE listType = :type;
+
+countMovies:
+SELECT count(*) FROM MovieEntity WHERE listType = :type;
+
+getPagedMovies:
+SELECT * FROM MovieEntity
+WHERE listType = :type
+ORDER BY page ASC, indexInResponse ASC
+LIMIT :limit OFFSET :offset;

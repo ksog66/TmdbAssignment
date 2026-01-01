@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.implementation
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Properties
@@ -42,7 +43,6 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.android)
             implementation(libs.sqldelight.android.driver)
-            implementation(libs.coil.compose)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.ios)
@@ -57,7 +57,14 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-            
+
+            implementation(libs.materialIcons.extended)
+            implementation(libs.materialIcons.core)
+
+            //coil
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
+
             // Ktor
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
@@ -79,6 +86,12 @@ kotlin {
             
             // SQLDelight
             implementation(libs.sqldelight.coroutines.extensions)
+            implementation(libs.sqldelight.runtime)
+            implementation(libs.sqldelight.paging3.extensions)
+
+            //Paging
+            implementation(libs.paging.compose.common)
+            implementation(libs.paging.common)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

@@ -4,6 +4,7 @@ import com.kklabs.themoviedb.data.models.MovieDTO
 import com.kklabs.themoviedb.data.models.MovieDetailDTO
 import com.kklabs.themoviedb.data.models.GenreDTO
 import com.kklabs.themoviedb.data.models.MovieResponseDTO
+import com.kklabs.themoviedb.database.MovieEntity
 import com.kklabs.themoviedb.domain.model.Movie
 import com.kklabs.themoviedb.domain.model.MovieDetail
 import com.kklabs.themoviedb.domain.model.Genre
@@ -55,3 +56,18 @@ fun GenreDTO.toDomain(): Genre {
         name = this.name,
     )
 }
+
+fun MovieEntity.toDomain(): Movie {
+    return Movie(
+        id = this.id.toInt(),
+        title = this.title,
+        posterPath = this.posterPath,
+        voteAverage = this.voteAverage,
+        overview = this.overview,
+        releaseDate = this.releaseDate,
+        backdropPath = this.backdropPath,
+        adult = this.adult
+    )
+}
+
+

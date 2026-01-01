@@ -1,0 +1,20 @@
+CREATE TABLE MovieDetailEntity (
+    id INTEGER NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    posterPath TEXT,
+    backdropPath TEXT,
+    overview TEXT NOT NULL,
+    releaseDate TEXT,
+    voteAverage REAL NOT NULL,
+    runtime INTEGER,
+    status TEXT,
+    tagline TEXT,
+    genres TEXT
+);
+
+insertMovieDetail:
+INSERT OR REPLACE INTO MovieDetailEntity(id, title, posterPath, backdropPath, overview, releaseDate, voteAverage, runtime, status, tagline, genres)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+getMovieDetail:
+SELECT * FROM MovieDetailEntity WHERE id = :id;
