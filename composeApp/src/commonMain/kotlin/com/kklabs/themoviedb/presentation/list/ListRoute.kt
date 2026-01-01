@@ -35,6 +35,7 @@ import com.kklabs.themoviedb.domain.model.MovieListType
 import com.kklabs.themoviedb.presentation.component.ErrorState
 import com.kklabs.themoviedb.presentation.component.LoadingState
 import com.kklabs.themoviedb.presentation.list.component.HorizontalMovieCard
+import com.kklabs.themoviedb.presentation.theme.Colors
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -91,11 +92,12 @@ fun ListScreen(
         modifier = modifier,
         contentPadding = PaddingValues(bottom = 16.dp)
     ) {
-        item {
+        stickyHeader {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 8.dp),
+                    .padding(horizontal = 8.dp)
+                    .background(Colors.darkBackground),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBackClick) {
