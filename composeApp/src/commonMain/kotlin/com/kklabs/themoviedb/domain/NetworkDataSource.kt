@@ -14,4 +14,6 @@ interface NetworkDataSource {
     suspend fun getUpcoming(page: Int): Result<MovieResponseDTO>
 
     suspend fun getMovieDetail(id: Int): Result<MovieDetailDTO>
+
+    suspend fun searchMovies(query: String, page: Int): Result<MovieResponseDTO>
 }

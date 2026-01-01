@@ -54,4 +54,16 @@ class NetworkDataSourceImpl (
             Result.failure(e)
         }
     }
+
+    override suspend fun searchMovies(
+        query: String,
+        page: Int
+    ): Result<MovieResponseDTO> {
+        return try {
+            val response = httpClient.get("/search/movie?query=$query&page=$page").body<MovieResponseDTO>()
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
