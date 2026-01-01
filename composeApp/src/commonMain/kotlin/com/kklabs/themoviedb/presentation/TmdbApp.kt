@@ -11,7 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.kklabs.themoviedb.presentation.detail.DetailRoute
+import com.kklabs.themoviedb.presentation.detail.MovieDetailRoute
 import com.kklabs.themoviedb.presentation.home.HomeRoute
 import com.kklabs.themoviedb.presentation.list.ListRoute
 import com.kklabs.themoviedb.domain.model.MovieListType
@@ -75,7 +75,7 @@ fun TmdbNavHost(
 
             val args = backStackEntry.toRoute<TmdbScreen.MovieDetail>()
 
-            DetailRoute(
+            MovieDetailRoute(
                 movieId = args.id,
                 modifier = modifier,
                 navController = navController

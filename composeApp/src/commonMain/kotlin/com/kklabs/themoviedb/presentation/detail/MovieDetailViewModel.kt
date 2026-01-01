@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class DetailViewModel(
+class MovieDetailViewModel(
     private val getMovieDetailUseCase: GetMovieDetailUseCase
 ) : ViewModel() {
 

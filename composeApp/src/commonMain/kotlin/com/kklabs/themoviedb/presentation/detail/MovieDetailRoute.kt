@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -39,17 +41,19 @@ import com.kklabs.themoviedb.Constants
 import com.kklabs.themoviedb.presentation.component.ErrorState
 import com.kklabs.themoviedb.presentation.component.LoadingState
 import com.kklabs.themoviedb.presentation.component.RatingBadge
+import com.kklabs.themoviedb.presentation.theme.Colors
+import com.kklabs.themoviedb.presentation.theme.Colors.white1
 import com.kklabs.themoviedb.utils.UiState
 import com.kklabs.themoviedb.utils.formatNumber
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun DetailRoute(
+fun MovieDetailRoute(
     movieId: Int,
     modifier: Modifier = Modifier,
     navController: NavController? = null
 ) {
-    val viewModel = koinViewModel<DetailViewModel>()
+    val viewModel = koinViewModel<MovieDetailViewModel>()
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -142,9 +146,10 @@ fun DetailScreen(
 
                 IconButton(
                     onClick = { navController?.popBackStack() },
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(16.dp)
                 ) {
                     Icon(
+                        modifier = Modifier.size(24.dp).background(Colors.textGreyColor, shape = CircleShape),
                         imageVector = Icons.Filled.ChevronLeft,
                         contentDescription = "Back",
                         tint = Color.White

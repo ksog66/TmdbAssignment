@@ -62,7 +62,7 @@ fun MovieCard(
                 model = imageUrl,
                 contentDescription = movie.title,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Fit
+                contentScale = ContentScale.FillBounds
             )
         } else {
             Box(
@@ -95,10 +95,6 @@ fun MovieCard(
             contentAlignment = Alignment.BottomStart
         ) {
             Column {
-                RatingBadge(
-                    rating = movie.voteAverage?: 2.0,
-                    modifier = Modifier.align(Alignment.End)
-                )
                 Text(
                     text = movie.title,
                     color = Color.White,
@@ -132,6 +128,12 @@ fun MovieCard(
                     )
                 }
             }
+        }
+        if (!isCarousel) {
+            RatingBadge(
+                rating = movie.voteAverage?: 2.0,
+                modifier = Modifier.align(Alignment.TopEnd).padding(top = 2.dp, end = 2.dp)
+            )
         }
     }
 }
