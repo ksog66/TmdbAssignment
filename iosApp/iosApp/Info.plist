@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BASE_URL</key>
+	<string>api.themoviedb.org/3</string>
+	<key>BEARER_TOKEN</key>
+	<string>eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3M2U1ZWZhZDc1ZGVmZDhkYzVkYTIxNTFhYjExNzQwMCIsIm5iZiI6MTYzMjc0MDk4Mi45NjYsInN1YiI6IjYxNTFhNjc2YWY5NTkwMDAyNjAxNGMxYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.4lZME3v3dh1WDJRJ6R34uo7o9s2Mg_RO6yhtdl765mg</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 </dict>
