@@ -25,11 +25,10 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kklabs.themoviedb.presentation.theme.Colors.white1
+import com.kklabs.themoviedb.presentation.theme.Colors
 
 @Composable
 fun HomeAppBar(
@@ -44,20 +43,22 @@ fun HomeAppBar(
 ) {
     Box(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .background(Colors.darkBackground),
         contentAlignment = Alignment.CenterStart
     ) {
         if (!isSearchOpen) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .background(Colors.darkBackground)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "SAFAR Movies",
-                    color = white1,
+                    text = "Tmdb",
+                    color = Colors.darkOnSurface,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -67,7 +68,7 @@ fun HomeAppBar(
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "Search",
-                            tint = Color.White,
+                            tint = Colors.darkOnSurface,
                             modifier = Modifier.size(28.dp)
                         )
                     }
@@ -84,21 +85,28 @@ fun HomeAppBar(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFF1A1A1A))
+                    .background(Colors.darkBackground)
                     .padding(horizontal = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextField(
                     value = searchQuery,
                     onValueChange = onSearchQueryChange,
-                    placeholder = { Text("Search movies...", color = Color.Gray) },
+                    placeholder = { 
+                        Text(
+                            "Search movies...", 
+                            color = Colors.darkOnSurfaceVariant
+                        ) 
+                    },
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color(0xFF2D2D2D),
-                        unfocusedContainerColor = Color(0xFF2D2D2D),
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
+                        focusedContainerColor = Colors.darkSurface,
+                        unfocusedContainerColor = Colors.darkSurface,
+                        focusedTextColor = Colors.darkOnSurface,
+                        unfocusedTextColor = Colors.darkOnSurface,
+                        focusedIndicatorColor = Colors.transparent,
+                        unfocusedIndicatorColor = Colors.transparent,
+                        focusedPlaceholderColor = Colors.darkOnSurfaceVariant,
+                        unfocusedPlaceholderColor = Colors.darkOnSurfaceVariant
                     ),
                     shape = RoundedCornerShape(24.dp),
                     modifier = Modifier.weight(1f),
@@ -108,7 +116,7 @@ fun HomeAppBar(
                             Icon(
                                 imageVector = Icons.Default.ChevronLeft,
                                 contentDescription = "Back",
-                                tint = Color.Gray
+                                tint = Colors.darkOnSurfaceVariant
                             )
                         }
                     },
@@ -118,7 +126,7 @@ fun HomeAppBar(
                                 Icon(
                                     imageVector = Icons.Default.Close,
                                     contentDescription = "Clear",
-                                    tint = Color.Gray
+                                    tint = Colors.darkOnSurfaceVariant
                                 )
                             }
                         }

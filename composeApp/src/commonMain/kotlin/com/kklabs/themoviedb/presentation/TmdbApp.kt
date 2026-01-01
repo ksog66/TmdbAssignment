@@ -10,7 +10,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.kklabs.themoviedb.presentation.detail.DetailRoute
 import com.kklabs.themoviedb.presentation.home.HomeRoute
+import com.kklabs.themoviedb.presentation.list.ListRoute
+import com.kklabs.themoviedb.domain.model.MovieListType
 import com.kklabs.themoviedb.presentation.navigation.TmdbScreen
 import com.kklabs.themoviedb.presentation.theme.Colors.white1
 
@@ -35,26 +39,47 @@ fun TmdbNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = TmdbScreen.Home.route,
+        startDestination = TmdbScreen.Home,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None }
     ) {
-        composable(
-            route = TmdbScreen.Home.route,
-        ) {
-            HomeRoute(modifier = modifier)
+        composable<TmdbScreen.Home> {
+            HomeRoute(
+                modifier = modifier,
+                navigateToDetail = {
+                    navController.navigate(TmdbScreen.MovieDetail(id = it))
+                },
+                navigateToList = { type ->
+                    navController.navigate(TmdbScreen.MovieList(type = type))
+                }
+            )
         }
 
-        composable(
-            route = TmdbScreen.MovieList.routePattern,
-        ) {
-            HomeRoute(modifier = modifier)
+        composable<TmdbScreen.MovieList> { backStackEntry ->
+            val args = backStackEntry.toRoute<TmdbScreen.MovieList>()
+            val listType = MovieListType.fromString(args.type)
+            
+            ListRoute(
+                listType = listType,
+                modifier = modifier,
+                navigateToDetail = {
+                    navController.navigate(TmdbScreen.MovieDetail(id = it))
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
 
-        composable(
-            route = TmdbScreen.MovieDetail.routePattern,
-        ) {
-            HomeRoute(modifier = modifier)
+        composable<TmdbScreen.MovieDetail> { backStackEntry ->
+
+            val args = backStackEntry.toRoute<TmdbScreen.MovieDetail>()
+
+            DetailRoute(
+                movieId = args.id,
+                modifier = modifier,
+                navController = navController
+            )
         }
     }
 }

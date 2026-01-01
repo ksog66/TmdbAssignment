@@ -17,8 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kklabs.themoviedb.domain.model.HomeData
 import com.kklabs.themoviedb.presentation.component.CacheIndicator
@@ -28,7 +26,6 @@ import com.kklabs.themoviedb.presentation.home.component.HomeAppBar
 import com.kklabs.themoviedb.presentation.home.component.MovieCarousel
 import com.kklabs.themoviedb.presentation.home.component.MovieSection
 import com.kklabs.themoviedb.presentation.theme.Colors
-import com.kklabs.themoviedb.presentation.theme.Colors.disabledTextGrey
 import com.kklabs.themoviedb.utils.UiState
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -50,7 +47,7 @@ fun HomeRoute(
     val isOnline = (uiState as? UiState.Success)?.fromCache == false
     Scaffold(
         modifier = modifier.fillMaxSize().windowInsetsPadding(WindowInsets.statusBars),
-        containerColor = disabledTextGrey,
+        containerColor = Colors.darkBackground,
         topBar = {
             HomeAppBar(
                 modifier = Modifier.fillMaxWidth(),
@@ -68,7 +65,7 @@ fun HomeRoute(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Colors.black)
+                .background(Colors.darkBackground)
                 .pullToRefresh(
                     isRefreshing = isHomeRefreshing,
                     state = pullRefreshState,
@@ -128,7 +125,7 @@ fun HomeScreen(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF1A1A1A))
+            .background(Colors.darkBackground)
     ) {
         item {
             if (homeData.nowPlayingMovies.isNotEmpty()) {
