@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kklabs.themoviedb.domain.model.HomeData
 import com.kklabs.themoviedb.presentation.component.CacheIndicator
@@ -50,7 +51,7 @@ fun HomeRoute(
         containerColor = Colors.darkBackground,
         topBar = {
             HomeAppBar(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
                 searchQuery = searchState.query,
                 isOnline = isOnline,
                 isSearchOpen = searchState.isActive,

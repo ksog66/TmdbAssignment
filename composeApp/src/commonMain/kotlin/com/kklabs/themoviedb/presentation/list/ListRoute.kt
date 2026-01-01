@@ -18,11 +18,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,29 +53,44 @@ fun ListRoute(
     }.collectAsLazyPagingItems()
 
     val refreshState = pagedMovies.loadState.refresh
+    val isRefreshing = refreshState is LoadState.Loading && pagedMovies.itemCount > 0
+    
+    val pullRefreshState = rememberPullToRefreshState()
 
-    Box(modifier = modifier.fillMaxSize().background(Color(0xFF1A1A1A)).windowInsetsPadding(WindowInsets.statusBars)) {
-        when {
-            refreshState is LoadState.Loading && pagedMovies.itemCount == 0 -> {
-                LoadingState(modifier = Modifier.fillMaxSize())
-            }
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Colors.darkBackground)
+            .windowInsetsPadding(WindowInsets.statusBars)
+    ) {
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = { pagedMovies.refresh() },
+            state = pullRefreshState,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            when {
+                refreshState is LoadState.Loading && pagedMovies.itemCount == 0 -> {
+                    LoadingState(modifier = Modifier.fillMaxSize())
+                }
 
-            refreshState is LoadState.Error && pagedMovies.itemCount == 0 -> {
-                ErrorState(
-                    message = (refreshState as LoadState.Error).error.message ?: "Unknown error",
-                    onRetry = { pagedMovies.retry() },
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+                refreshState is LoadState.Error && pagedMovies.itemCount == 0 -> {
+                    ErrorState(
+                        message = (refreshState as LoadState.Error).error.message ?: "Unknown error",
+                        onRetry = { pagedMovies.retry() },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
 
-            else -> {
-                ListScreen(
-                    pagedMovies = pagedMovies,
-                    title = listType.displayName,
-                    onMovieClick = navigateToDetail,
-                    onBackClick = onBackClick,
-                    modifier = Modifier.fillMaxSize()
-                )
+                else -> {
+                    ListScreen(
+                        pagedMovies = pagedMovies,
+                        title = listType.displayName,
+                        onMovieClick = navigateToDetail,
+                        onBackClick = onBackClick,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
         }
     }
@@ -104,12 +120,12 @@ fun ListScreen(
                     Icon(
                         imageVector = Icons.Default.ChevronLeft,
                         contentDescription = "Back",
-                        tint = Color.White
+                        tint = Colors.darkOnSurface
                     )
                 }
                 Text(
                     text = title,
-                    color = Color.White,
+                    color = Colors.darkOnSurface,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = 8.dp)
@@ -143,7 +159,7 @@ fun ListScreen(
                         .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(color = Color.White)
+                    CircularProgressIndicator(color = Colors.darkPrimary)
                 }
             }
         } else if (appendState is LoadState.Error) {
@@ -157,7 +173,7 @@ fun ListScreen(
                     TextButton(onClick = { pagedMovies.retry() }) {
                         Text(
                             text = "Error loading more. Tap to Retry.",
-                            color = Color(0xFF1E90FF)
+                            color = Colors.darkPrimary
                         )
                     }
                 }

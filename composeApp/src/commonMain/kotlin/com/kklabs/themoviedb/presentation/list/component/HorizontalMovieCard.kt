@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -28,6 +27,7 @@ import coil3.compose.AsyncImage
 import com.kklabs.themoviedb.Constants
 import com.kklabs.themoviedb.domain.model.Movie
 import com.kklabs.themoviedb.presentation.component.RatingBadge
+import com.kklabs.themoviedb.presentation.theme.Colors
 
 @Composable
 fun HorizontalMovieCard(
@@ -42,7 +42,7 @@ fun HorizontalMovieCard(
             .fillMaxWidth()
             .height(120.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFF2D2D2D))
+            .background(Colors.darkSurface)
             .clickable(onClick = onClick)
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -64,7 +64,7 @@ fun HorizontalMovieCard(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Gray)
+                        .background(Colors.darkOutlineVariant)
                 )
             }
         }
@@ -79,7 +79,7 @@ fun HorizontalMovieCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = movie.title,
-                    color = Color.White,
+                    color = Colors.darkOnSurface,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,
@@ -89,7 +89,7 @@ fun HorizontalMovieCard(
                 if (movie.overview.isNotEmpty()) {
                     Text(
                         text = movie.overview,
-                        color = Color.White.copy(alpha = 0.7f),
+                        color = Colors.darkOnSurfaceVariant,
                         fontSize = 12.sp,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
@@ -106,7 +106,7 @@ fun HorizontalMovieCard(
                 if (movie.releaseDate != null) {
                     Text(
                         text = movie.releaseDate,
-                        color = Color.White.copy(alpha = 0.6f),
+                        color = Colors.darkOnSurfaceVariant,
                         fontSize = 11.sp
                     )
                 }

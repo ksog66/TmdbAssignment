@@ -17,10 +17,6 @@ class ListViewModel(
         return getPagedMoviesUseCase(listType)
             .cachedIn(viewModelScope)
     }
-
-    fun refresh() {
-
-    }
 }
 
 

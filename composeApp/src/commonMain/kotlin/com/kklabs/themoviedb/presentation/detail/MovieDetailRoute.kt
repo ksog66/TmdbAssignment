@@ -42,7 +42,6 @@ import com.kklabs.themoviedb.presentation.component.ErrorState
 import com.kklabs.themoviedb.presentation.component.LoadingState
 import com.kklabs.themoviedb.presentation.component.RatingBadge
 import com.kklabs.themoviedb.presentation.theme.Colors
-import com.kklabs.themoviedb.presentation.theme.Colors.white1
 import com.kklabs.themoviedb.utils.UiState
 import com.kklabs.themoviedb.utils.formatNumber
 import org.koin.compose.viewmodel.koinViewModel
@@ -95,7 +94,7 @@ fun DetailScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF1A1A1A))
+            .background(Colors.darkBackground)
     ) {
         Column(
             modifier = Modifier
@@ -125,7 +124,7 @@ fun DetailScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color.Gray)
+                            .background(Colors.darkOutlineVariant)
                     )
                 }
 
@@ -135,8 +134,8 @@ fun DetailScreen(
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(
-                                    Color.Transparent,
-                                    Color(0xFF1A1A1A)
+                                    Colors.transparent,
+                                    Colors.darkBackground
                                 ),
                                 startY = 0f,
                                 endY = Float.POSITIVE_INFINITY
@@ -149,10 +148,12 @@ fun DetailScreen(
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Icon(
-                        modifier = Modifier.size(24.dp).background(Colors.textGreyColor, shape = CircleShape),
+                        modifier = Modifier
+                            .size(24.dp)
+                            .background(Colors.darkSurfaceContainer, shape = CircleShape),
                         imageVector = Icons.Filled.ChevronLeft,
                         contentDescription = "Back",
-                        tint = Color.White
+                        tint = Colors.darkOnSurface
                     )
                 }
             }
@@ -169,7 +170,7 @@ fun DetailScreen(
                 ) {
                     Text(
                         text = movieDetail.title,
-                        color = Color.White,
+                        color = Colors.darkOnSurface,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f),
@@ -184,7 +185,7 @@ fun DetailScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = movieDetail.tagline,
-                        color = Color.White.copy(alpha = 0.8f),
+                        color = Colors.darkOnSurfaceVariant,
                         fontSize = 16.sp,
                         fontStyle = FontStyle.Italic
                     )
@@ -200,12 +201,12 @@ fun DetailScreen(
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(12.dp))
-                                    .background(Color(0xFF2D2D2D))
+                                    .background(Colors.darkSurface)
                                     .padding(horizontal = 12.dp, vertical = 6.dp)
                             ) {
                                 Text(
                                     text = genre.name,
-                                    color = Color.White,
+                                    color = Colors.darkOnSurface,
                                     fontSize = 12.sp
                                 )
                             }
@@ -220,14 +221,14 @@ fun DetailScreen(
                     if (movieDetail.releaseDate.isNotEmpty()) {
                         Text(
                             text = "Release: ${movieDetail.releaseDate}",
-                            color = Color.White.copy(alpha = 0.7f),
+                            color = Colors.darkOnSurfaceVariant,
                             fontSize = 14.sp
                         )
                     }
                     if (movieDetail.runtime != null) {
                         Text(
                             text = "${movieDetail.runtime} min",
-                            color = Color.White.copy(alpha = 0.7f),
+                            color = Colors.darkOnSurfaceVariant,
                             fontSize = 14.sp
                         )
                     }
@@ -236,14 +237,14 @@ fun DetailScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "Overview",
-                    color = Color.White,
+                    color = Colors.darkOnSurface,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = movieDetail.overview,
-                    color = Color.White.copy(alpha = 0.9f),
+                    color = Colors.darkOnSurfaceVariant,
                     fontSize = 14.sp,
                     lineHeight = 20.sp
                 )
@@ -252,7 +253,7 @@ fun DetailScreen(
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
                         text = "Additional Info",
-                        color = Color.White,
+                        color = Colors.darkOnSurface,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -260,7 +261,7 @@ fun DetailScreen(
                     if (movieDetail.budget > 0) {
                         Text(
                             text = "Budget: $${movieDetail.budget.formatNumber()}",
-                            color = Color.White.copy(alpha = 0.9f),
+                            color = Colors.darkOnSurfaceVariant,
                             fontSize = 14.sp
                         )
                     }
@@ -268,7 +269,7 @@ fun DetailScreen(
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "Revenue: $${movieDetail.revenue.formatNumber()}",
-                            color = Color.White.copy(alpha = 0.9f),
+                            color = Colors.darkOnSurfaceVariant,
                             fontSize = 14.sp
                         )
                     }
@@ -277,7 +278,7 @@ fun DetailScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "Status: ${movieDetail.status}",
-                    color = Color.White.copy(alpha = 0.7f),
+                    color = Colors.darkOnSurfaceVariant,
                     fontSize = 14.sp
                 )
             }
