@@ -2,7 +2,6 @@ package com.kklabs.themoviedb.presentation.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,11 +9,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -30,6 +34,7 @@ import com.kklabs.themoviedb.presentation.theme.Colors
 import com.kklabs.themoviedb.utils.UiState
 import org.koin.compose.viewmodel.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeRoute(
     modifier: Modifier = Modifier,
@@ -41,17 +46,28 @@ fun HomeRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchState by viewModel.searchState.collectAsStateWithLifecycle()
 
-    val isHomeRefreshing = uiState is UiState.Loading
+    var lastSuccessData by remember { mutableStateOf<HomeData?>(null) }
 
+    LaunchedEffect(uiState) {
+        if (uiState is UiState.Success) {
+            lastSuccessData = (uiState as UiState.Success).data
+        }
+    }
+
+    val isHomeRefreshing = (uiState is UiState.Loading && lastSuccessData != null)
     val pullRefreshState = rememberPullToRefreshState()
-
     val isOnline = (uiState as? UiState.Success)?.fromCache == false
+
     Scaffold(
-        modifier = modifier.fillMaxSize().windowInsetsPadding(WindowInsets.statusBars),
+        modifier = modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.statusBars),
         containerColor = Colors.darkBackground,
         topBar = {
             HomeAppBar(
-                modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 2.dp),
                 searchQuery = searchState.query,
                 isOnline = isOnline,
                 isSearchOpen = searchState.isActive,
@@ -62,54 +78,52 @@ fun HomeRoute(
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(Colors.darkBackground)
-                .pullToRefresh(
-                    isRefreshing = isHomeRefreshing,
-                    state = pullRefreshState,
-                    onRefresh = { viewModel.refresh() })
-        ) {
-            if (searchState.isActive) {
-                SearchListScreen(
-                    movies = searchState.results,
-                    isLoading = searchState.isLoading,
-                    errorMessage = searchState.error,
-                    searchQuery = searchState.query,
-                    onMovieClick = navigateToDetail,
-                    onLoadMore = { viewModel.loadNextSearchPage() },
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else {
-                when (val state = uiState) {
-                    is UiState.Success -> {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            HomeScreen(
-                                homeData = state.data,
-                                navigateToDetail = navigateToDetail,
-                                navigateToList = navigateToList
+        if (searchState.isActive) {
+            SearchListScreen(
+                movies = searchState.results,
+                isLoading = searchState.isLoading,
+                errorMessage = searchState.error,
+                searchQuery = searchState.query,
+                onMovieClick = navigateToDetail,
+                onLoadMore = { viewModel.loadNextSearchPage() },
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            )
+        } else {
+            PullToRefreshBox(
+                isRefreshing = isHomeRefreshing,
+                state = pullRefreshState,
+                onRefresh = { viewModel.refresh() },
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                val currentData = (uiState as? UiState.Success)?.data ?: lastSuccessData
+
+                if (currentData != null) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        HomeScreen(
+                            homeData = currentData,
+                            navigateToDetail = navigateToDetail,
+                            navigateToList = navigateToList
+                        )
+                        if (uiState is UiState.Success && (uiState as UiState.Success).fromCache) {
+                            CacheIndicator(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .align(Alignment.BottomCenter)
                             )
-                            if (state.fromCache) {
-                                CacheIndicator(
-                                    modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter)
-                                )
-                            }
                         }
                     }
-
-                    is UiState.Error -> {
-                        ErrorState(
-                            modifier = Modifier.fillMaxSize(),
-                            onRetry = {viewModel.refresh()},
-                            message = state.message ?: "Something Went Wrong"
-                        )
-                    }
-
-                    is UiState.Loading -> {
-                        LoadingState()
-                    }
+                } else if (uiState is UiState.Loading) {
+                    LoadingState()
+                } else if (uiState is UiState.Error) {
+                    ErrorState(
+                        modifier = Modifier.fillMaxSize(),
+                        onRetry = { viewModel.refresh() },
+                        message = (uiState as UiState.Error).message ?: "Something Went Wrong"
+                    )
                 }
             }
         }

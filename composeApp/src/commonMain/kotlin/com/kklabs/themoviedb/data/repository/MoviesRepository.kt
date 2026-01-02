@@ -7,6 +7,7 @@ import app.cash.paging.PagingData
 import app.cash.paging.map
 import app.cash.sqldelight.paging3.QueryPagingSource
 import com.kklabs.themoviedb.data.mapper.toDomain
+import com.kklabs.themoviedb.data.mapper.toMovie
 import com.kklabs.themoviedb.data.paging.MovieRemoteMediator
 import com.kklabs.themoviedb.database.MovieDatabase
 import com.kklabs.themoviedb.domain.NetworkDataSource
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 
 class MoviesRepositoryImpl(
     private val networkDataSource: NetworkDataSource,
@@ -42,10 +44,10 @@ class MoviesRepositoryImpl(
                     val topRatedDef = async { networkDataSource.getTopRated(1) }
                     val upcomingDef = async { networkDataSource.getUpcoming(1) }
 
-                    val nowPlaying = nowPlayingDef.await().getOrThrow().toDomain().movies.take(10)
-                    val popular = popularDef.await().getOrThrow().toDomain().movies.take(10)
-                    val topRated = topRatedDef.await().getOrThrow().toDomain().movies.take(10)
-                    val upcoming = upcomingDef.await().getOrThrow().toDomain().movies.take(10)
+                    val nowPlaying = nowPlayingDef.await().getOrThrow().toMovie().movies.take(10)
+                    val popular = popularDef.await().getOrThrow().toMovie().movies.take(10)
+                    val topRated = topRatedDef.await().getOrThrow().toMovie().movies.take(10)
+                    val upcoming = upcomingDef.await().getOrThrow().toMovie().movies.take(10)
 
                     db.transaction {
                         saveCategoryToDb("now_playing", nowPlaying)
@@ -79,7 +81,7 @@ class MoviesRepositoryImpl(
     override suspend fun getNowPlaying(page: Int): Flow<Result<MoviePage>> = flow {
         val networkResult = networkDataSource.getNowPlaying(page)
         networkResult.onSuccess {
-            emit(Result.success(it.toDomain()))
+            emit(Result.success(it.toMovie()))
         }.onFailure { error ->
             emit(Result.failure(error))
         }
@@ -88,7 +90,7 @@ class MoviesRepositoryImpl(
     override suspend fun getPopular(page: Int): Flow<Result<MoviePage>> = flow {
         val networkResult = networkDataSource.getPopular(page)
         networkResult.onSuccess {
-            emit(Result.success(it.toDomain()))
+            emit(Result.success(it.toMovie()))
         }.onFailure { error ->
             emit(Result.failure(error))
         }
@@ -97,7 +99,7 @@ class MoviesRepositoryImpl(
     override suspend fun getTopRated(page: Int): Flow<Result<MoviePage>> = flow {
         val networkResult = networkDataSource.getTopRated(page)
         networkResult.onSuccess {
-            emit(Result.success(it.toDomain()))
+            emit(Result.success(it.toMovie()))
         }.onFailure { error ->
             emit(Result.failure(error))
         }
@@ -106,19 +108,71 @@ class MoviesRepositoryImpl(
     override suspend fun getUpcoming(page: Int): Flow<Result<MoviePage>> = flow {
         val networkResult = networkDataSource.getUpcoming(page)
         networkResult.onSuccess {
-            emit(Result.success(it.toDomain()))
+            emit(Result.success(it.toMovie()))
         }.onFailure { error ->
             emit(Result.failure(error))
         }
     }
 
-    override suspend fun getMovieDetail(id: Int): Flow<Result<MovieDetail>> = flow {
+    override suspend fun getMovieDetail(id: Int): Flow<Resource<MovieDetail>> = flow {
         val networkResult = networkDataSource.getMovieDetail(id)
-        networkResult.onSuccess {
-            emit(Result.success(it.toDomain()))
-        }.onFailure { error ->
-            emit(Result.failure(error))
+
+        networkResult.onSuccess { dto ->
+            val domainModel = dto.toMovie()
+
+            withContext(Dispatchers.IO) {
+                saveMovieDetailToDb(domainModel)
+            }
+
+            emit(Resource.Success(domainModel))
+        }.onFailure { networkError ->
+            val cachedEntity = withContext(Dispatchers.IO) {
+                db.moviedetailQueries
+                    .getMovieDetail(id.toLong())
+                    .executeAsOneOrNull()
+            }
+
+            if (cachedEntity != null) {
+                emit(
+                    Resource.Error(
+                        message = networkError.message ?: "Something went wrong",
+                        cachedData = cachedEntity.toDomain()
+                    )
+                )
+            } else {
+                emit(
+                    Resource.Error(
+                        message = networkError.message ?: "Something went wrong",
+                        cachedData = null
+                    )
+                )
+            }
         }
+    }
+
+    private fun saveMovieDetailToDb(movie: MovieDetail) {
+        val genresString = try {
+            Json.encodeToString(movie.genres)
+        } catch (e: Exception) {
+            "[]"
+        }
+
+        db.moviedetailQueries.insertMovieDetail(
+            id = movie.id.toLong(),
+            title = movie.title,
+            posterPath = movie.posterPath,
+            backdropPath = movie.backdropPath,
+            overview = movie.overview,
+            releaseDate = movie.releaseDate,
+            voteAverage = movie.voteAverage,
+            runtime = movie.runtime?.toLong(),
+            status = movie.status,
+            tagline = movie.tagline,
+            genres = genresString,
+            adult = movie.adult,
+            budget = movie.budget,
+            revenue = movie.revenue
+        )
     }
 
     @OptIn(ExperimentalPagingApi::class, app.cash.paging.ExperimentalPagingApi::class)
@@ -157,7 +211,7 @@ class MoviesRepositoryImpl(
         )
             .flow
             .map { pagingData ->
-                pagingData.map { entity -> entity.toDomain() }
+                pagingData.map { entity -> entity.toMovie() }
             }
     }
 
@@ -167,7 +221,7 @@ class MoviesRepositoryImpl(
     ): Flow<Result<MoviePage>> = flow {
         val networkResult = networkDataSource.searchMovies(query, page)
         networkResult.onSuccess {
-            emit(Result.success(it.toDomain()))
+            emit(Result.success(it.toMovie()))
         }.onFailure { error ->
             emit(Result.failure(error))
         }
@@ -205,8 +259,9 @@ class MoviesRepositoryImpl(
         return db.movieQueries
             .getPreviewMovies(type)
             .executeAsList()
-            .map { it.toDomain() }
+            .map { it.toMovie() }
     }
+
     private suspend fun fetchFromFlow(
         call: suspend () -> Flow<Result<MoviePage>>
     ): Result<MoviePage> {

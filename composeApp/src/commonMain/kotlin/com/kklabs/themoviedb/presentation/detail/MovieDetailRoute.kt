@@ -26,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.kklabs.themoviedb.Constants
+import com.kklabs.themoviedb.presentation.component.CacheIndicator
 import com.kklabs.themoviedb.presentation.component.ErrorState
 import com.kklabs.themoviedb.presentation.component.LoadingState
 import com.kklabs.themoviedb.presentation.component.RatingBadge
@@ -62,11 +62,20 @@ fun MovieDetailRoute(
 
     when (val state = uiState) {
         is UiState.Success -> {
-            DetailScreen(
-                movieDetail = state.data,
-                navController = navController,
-                modifier = modifier
-            )
+            Box(modifier = modifier.fillMaxSize()) {
+                DetailScreen(
+                    movieDetail = state.data,
+                    navController = navController,
+                    modifier = Modifier.fillMaxSize()
+                )
+                if (uiState is UiState.Success && (uiState as UiState.Success).fromCache) {
+                    CacheIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter)
+                    )
+                }
+            }
         }
         is UiState.Error -> {
             ErrorState(

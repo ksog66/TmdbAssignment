@@ -3,6 +3,7 @@ package com.kklabs.themoviedb.presentation.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kklabs.themoviedb.domain.model.MovieDetail
+import com.kklabs.themoviedb.domain.model.Resource
 import com.kklabs.themoviedb.domain.usecase.GetMovieDetailUseCase
 import com.kklabs.themoviedb.utils.UiState
 import kotlinx.coroutines.flow.Flow
@@ -23,15 +24,23 @@ class MovieDetailViewModel(
     fun fetchMovieDetail(movieId: Int) {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            try {
-                val movieDetail = getMovieDetailUseCase(movieId).extractMovieDetail()
-                if (movieDetail != null) {
-                    _uiState.value = UiState.Success(movieDetail)
-                } else {
-                    _uiState.value = UiState.Error(message = "Failed to load movie details")
+
+            val result = getMovieDetailUseCase(movieId).extractMovieDetail()
+
+            _uiState.value = when (result) {
+                is Resource.Success -> {
+                    UiState.Success(result.data)
                 }
-            } catch (e: Exception) {
-                _uiState.value = UiState.Error(message = e.message ?: "Something went wrong")
+                is Resource.Error -> {
+                    if (result.cachedData != null) {
+                        UiState.Success(
+                            data = result.cachedData,
+                            fromCache = true
+                        )
+                    } else {
+                        UiState.Error(message = result.message)
+                    }
+                }
             }
         }
     }
@@ -40,11 +49,10 @@ class MovieDetailViewModel(
         fetchMovieDetail(movieId)
     }
 
-    private suspend fun Flow<Result<MovieDetail>>.extractMovieDetail(): MovieDetail? {
+    private suspend fun Flow<Resource<MovieDetail>>.extractMovieDetail(): Resource<MovieDetail> {
         return this
-            .catch { emit(Result.failure(it)) }
+            .catch { emit(Resource.Error(it.message ?: "Unknow Error Occurred")) }
             .first()
-            .getOrNull()
     }
 }
 

@@ -91,7 +91,9 @@ fun HomeAppBar(
             ) {
                 TextField(
                     value = searchQuery,
-                    onValueChange = onSearchQueryChange,
+                    onValueChange = {
+                        onSearchQueryChange(it.trim())
+                    },
                     placeholder = { 
                         Text(
                             "Search movies...", 

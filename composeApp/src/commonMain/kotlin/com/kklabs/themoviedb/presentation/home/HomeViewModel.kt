@@ -3,7 +3,6 @@ package com.kklabs.themoviedb.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kklabs.themoviedb.domain.model.Movie
-import com.kklabs.themoviedb.domain.model.MoviePage
 import com.kklabs.themoviedb.domain.model.Resource
 import com.kklabs.themoviedb.domain.model.HomeData
 import com.kklabs.themoviedb.domain.usecase.GetHomeDataUseCase
@@ -11,12 +10,9 @@ import com.kklabs.themoviedb.domain.usecase.SearchMovieUseCase
 import com.kklabs.themoviedb.utils.UiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -43,7 +39,6 @@ class HomeViewModel(
     fun fetchHomeData() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-
             val result = getHomeDataUseCase()
 
             when (result) {
@@ -123,17 +118,6 @@ class HomeViewModel(
                 )
             }
         }
-    }
-
-
-    private suspend fun Flow<Result<MoviePage>>.extractMovies(): List<Movie> {
-        return this
-            .catch { emit(Result.failure(it)) }
-            .first()
-            .getOrNull()
-            ?.movies
-            ?.take(10)
-            ?: emptyList()
     }
 }
 

@@ -1,3 +1,5 @@
+import kotlin.Boolean;
+
 CREATE TABLE MovieDetailEntity (
     id INTEGER NOT NULL PRIMARY KEY,
     title TEXT NOT NULL,
@@ -9,12 +11,19 @@ CREATE TABLE MovieDetailEntity (
     runtime INTEGER,
     status TEXT,
     tagline TEXT,
-    genres TEXT
+    genres TEXT,
+    adult INTEGER AS Boolean NOT NULL DEFAULT 0,
+    budget INTEGER NOT NULL,
+    revenue INTEGER NOT NULL
 );
 
 insertMovieDetail:
-INSERT OR REPLACE INTO MovieDetailEntity(id, title, posterPath, backdropPath, overview, releaseDate, voteAverage, runtime, status, tagline, genres)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO MovieDetailEntity(
+    id, title, posterPath, backdropPath, overview, releaseDate,
+    voteAverage, runtime, status, tagline, genres,
+    adult, budget, revenue
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 getMovieDetail:
 SELECT * FROM MovieDetailEntity WHERE id = :id;
