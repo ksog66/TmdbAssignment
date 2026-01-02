@@ -1,73 +1,104 @@
-# Mini Explorer - TheMovieDB KMP App
+# 🎬 Mini Explorer
 
-A Kotlin Multiplatform (KMP) application designed to demonstrate shared business logic across Android and iOS platforms. This app fetches data from **TheMovieDB API** to display a list of movies and detailed information, supporting offline access and clean UI states.
+A cross-platform movie exploration app built with **Kotlin Multiplatform (KMP)** that runs natively on **Android** and **iOS**.  
+The app fetches movie data from **TheMovieDB API**, supports search and detailed views, and works **offline** using local caching.
 
-## 📱 Features
+---
 
-* [cite_start]**Cross-Platform:** Runs natively on Android and iOS using a single shared codebase[cite: 3].
-* **Two-Screen Flow:**
-    * [cite_start]**List Screen:** Displays a scrollable list of movies with search capability, handling loading, error, and empty states[cite: 10].
-    * [cite_start]**Detail Screen:** Shows detailed information for a selected movie with meaningful fields[cite: 11].
-* **Offline Support:** Caches successful API responses locally. [cite_start]If the network fails, it displays cached data with an indicator[cite: 13].
-* [cite_start]**Pagination:** Supports loading data in chunks (Bonus Feature)[cite: 36].
+## ✨ Features
+
+- 📱 Runs on both **Android** and **iOS**
+- 🔄 Shared business logic using **Kotlin Multiplatform**
+- 🔍 Search movies and view detailed information
+- 💾 Offline support with local database caching
+- 🧼 Clean UI state handling
+- 🏗️ Clean Architecture with clear separation of concerns
+
+---
 
 ## 🛠 Tech Stack
 
-* **Language:** Kotlin (Multiplatform)
-* [cite_start]**UI:** Compose Multiplatform (Android) & SwiftUI/Compose (iOS) [cite: 26]
-* [cite_start]**Networking:** Ktor Client [cite: 21]
-* [cite_start]**Serialization:** kotlinx.serialization [cite: 22]
-* [cite_start]**Concurrency:** Coroutines and Flow [cite: 23]
-* [cite_start]**Caching:** SQLDelight / Key-Value storage [cite: 24]
-* **Dependency Injection:** Koin (implied by project structure)
+- **Kotlin Multiplatform (KMP)**
+- **Compose Multiplatform**
+- **Ktor**
+- **kotlinx.serialization**
+- **Koin**
+- **SQLDelight**
+- **Coroutines & Flow**
 
 ---
 
-## 🏗 Architecture
+## 🚀 Project Setup
 
-[cite_start]The project follows **Clean Architecture** principles to ensure separation of concerns and testability, keeping business logic within the shared KMP module[cite: 27].
+### 1️⃣ Clone the Repository
 
-### 1. Domain Layer (`domain`)
-* **Role:** The core business logic, independent of any platform.
-* **Components:**
-    * [cite_start]**Models:** Pure Kotlin data classes (e.g., `Movie`)[cite: 15].
-    * **UseCases:** Encapsulates business actions (e.g., `GetMovieDetailUseCase`).
-    * [cite_start]**Repository Interfaces:** Defines contracts for data operations[cite: 16].
+```sh
+git clone git@github.com:ksog66/TmdbAssignment.git
+```
 
-### 2. Data Layer (`data`)
-* **Role:** Handles data retrieval from remote APIs or local cache.
-* **Components:**
-    * [cite_start]**Remote:** Ktor client implementation[cite: 15].
-    * [cite_start]**Repository Implementation:** Manages data flow between remote and local sources[cite: 16].
-    * **Mapper:** Converts network DTOs into Domain models.
-    * **Paging:** Manages pagination logic.
+### 🤖 Android Setup
 
-### 3. Presentation Layer (`presentation`)
-* **Role:** Handles UI rendering and state management.
-* **Components:**
-    * **Screens:** `Home`, `Detail`, `List`.
-    * **Navigation:** Handles routing between screens.
-    * [cite_start]**State:** Manages `Loading`, `Success`, and `Error` states [cite: 28-31].
+Navigate to the composeApp directory:
 
----
+```sh
+cd composeApp
+```
 
-## 🚀 Getting Started
+Create a `keys.properties` file:
 
-To run this application, you must configure your API keys for both Android and iOS environments.
+```sh
+touch keys.properties
+```
 
-### 1. Prerequisites
-* Android Studio (latest version recommended)
-* Xcode (for running the iOS app)
-* JDK 17 or higher
-* An API Token from [TheMovieDB](https://www.themoviedb.org/documentation/api)
+Add the following values to `keys.properties`:
 
-### 2. Android Configuration
-To keep sensitive keys out of version control, we use a `keys.properties` file.
-
-1.  Navigate to the `composeApp` directory.
-2.  Create a new file named `keys.properties` as a sibling of `build.gradle.kts` (Module: composeApp).
-3.  Add the following content:
-
-```properties
+```
 baseUrl=api.themoviedb.org/3
 bearerToken=YOUR_TOKEN_HERE
+```
+
+### 🍎 iOS Setup
+
+1. Open the `iosApp` folder in Xcode
+2. Open `Info.plist`
+3. Add the following keys:
+   - `BASE_URL=api.themoviedb.org/3`
+   - `BEARER_TOKEN=YOUR_TOKEN_HERE`
+4. Select the project root in Xcode
+5. Go to **Signing & Capabilities**
+6. Choose your Development Team
+
+### ▶️ Run the App
+
+1. Open the project in Android Studio or Xcode
+2. Click **Run**
+
+---
+
+## 🧱 Architecture Used
+
+This project follows **Clean Architecture**, ensuring scalability, testability, and maintainability.
+
+### Presentation Layer
+- Handles UI rendering and UI state
+- Platform-specific UI (Compose for Android, SwiftUI for iOS)
+
+### Domain Layer
+- Contains business logic
+- Uses UseCases for each action (e.g., fetch movies, movie details)
+- Fully shared across platforms
+
+### Data Layer
+- Handles API communication and local caching
+- Maps remote and local data models
+- Shared across Android and iOS
+
+The **Domain** and **Data** layers are shared between Android and iOS, eliminating duplicated logic.
+
+---
+
+## 📌 Notes
+
+- UseCases keep business logic clean and testable
+- Offline-first approach improves user experience
+- Designed to scale with additional features
