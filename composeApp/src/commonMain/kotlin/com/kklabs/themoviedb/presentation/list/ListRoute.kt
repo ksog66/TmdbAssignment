@@ -53,7 +53,7 @@ fun ListRoute(
     }.collectAsLazyPagingItems()
 
     val refreshState = pagedMovies.loadState.refresh
-    val isRefreshing = refreshState is LoadState.Loading && pagedMovies.itemCount > 0
+    val isRefreshing = refreshState is LoadState.Loading && pagedMovies.itemSnapshotList.isNotEmpty()
     
     val pullRefreshState = rememberPullToRefreshState()
 
