@@ -97,6 +97,10 @@ The **Domain** and **Data** layers are shared between Android and iOS, eliminati
 
 ---
 
+https://github.com/user-attachments/assets/9baa0f64-3d05-43aa-94aa-54dd0b49eeb8
+
+
+
 ## 📌 Notes
 
 - UseCases keep business logic clean and testable
